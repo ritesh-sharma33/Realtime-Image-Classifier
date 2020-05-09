@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:realtime_image_classifier/camera_page.dart';
+import 'package:camera/camera.dart';
 
-void main() => runApp(MyApp());
+List<CameraDescription> cameras;
+CameraDescription firstCamera;
+
+Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    cameras = await availableCameras(); 
+    firstCamera = cameras.first;
+  } on CameraException catch(e) {
+    print(e);
+  }
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Realtime Image Classifier',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'ImageClassify'),
     );
   }
 }
@@ -25,8 +40,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,10 +48,18 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Text(
-          "Hemlo Doge"
+        child: FlatButton(
+          child: Text("Start Camera"),
+          onPressed: () {
+            Navigator.push(
+              context, 
+              MaterialPageRoute(
+                builder: (context) => CameraPage(firstCamera)
+              )
+            );
+          },
         )
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ), 
     );
   }
 }
